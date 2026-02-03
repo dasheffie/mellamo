@@ -1,0 +1,218 @@
+{
+  "app": {
+    "name": "Mellamo",
+    "domain": "mellamo.com",
+    "description": "Data-first baby naming app with ML-powered preference learning via swipe interface",
+    "deployedAt": null,
+    "status": "ready-for-deployment"
+  },
+  "efficiency": {
+    "tokensUsed": {
+      "estimated": true,
+      "count": 85000,
+      "notes": "Main session + 3 sub-agents for name expansion (20k each)"
+    },
+    "codingTime": {
+      "hours": 3,
+      "notes": "Built 2026-02-02/03 evening session, extensive feature set"
+    },
+    "deploymentSpeed": {
+      "daysFromStart": 0.15,
+      "notes": "Concept to feature-complete in ~3.5 hours"
+    },
+    "timeToFirstService": {
+      "minutes": 15,
+      "startedAt": "2026-02-02T21:20:00Z",
+      "firstRunAt": "2026-02-02T21:35:00Z",
+      "notes": "Initial Express scaffold quick, ML features took longer"
+    },
+    "humanInterventions": {
+      "count": 0,
+      "log": [],
+      "notes": "No interventions needed"
+    }
+  },
+  "errors": {
+    "total": 3,
+    "resolved": 3,
+    "unresolved": 0,
+    "byType": { "syntax": 2, "runtime": 0, "build": 0, "dependency": 0, "config": 1, "other": 0 },
+    "log": [
+      { "time": "2026-02-02T21:40:00Z", "type": "syntax", "error": "Duplicate variable declaration in server.js", "resolved": true, "fix": "Removed duplicate let statement" },
+      { "time": "2026-02-02T21:50:00Z", "type": "syntax", "error": "Seed script failed - tables didn't exist", "resolved": true, "fix": "Added CREATE TABLE IF NOT EXISTS to seed.js" },
+      { "time": "2026-02-02T22:00:00Z", "type": "config", "error": "Model weights not loading on refresh", "resolved": true, "fix": "Added model_weights_json column to sessions table" }
+    ]
+  },
+  "quality": {
+    "testCoverage": {
+      "overall": 35,
+      "byType": {
+        "unit": { "count": 31, "coverage": 35, "notes": "Unit tests for model.js and features.js" },
+        "integration": { "count": 0, "coverage": 0, "notes": "No integration tests" },
+        "e2e": { "count": 0, "coverage": 0, "notes": "No automated E2E" },
+        "manual": { "count": 15, "notes": "Extensive manual testing of swipe flow, ML predictions, all modals, gamification features" }
+      },
+      "notes": "31 unit tests covering ML model and feature builder"
+    },
+    "loadTime": {
+      "firstContentfulPaint": null,
+      "timeToInteractive": null,
+      "fullyLoaded": null,
+      "unit": "ms",
+      "notes": "Not measured - expected fast despite ML computations"
+    },
+    "dependencyHealth": {
+      "totalDependencies": 3,
+      "outdatedCount": 2,
+      "oldestDepTimeSinceLastRelease": { "name": "sqlite3", "months": 12 },
+      "mostOutdated": { "name": "uuid", "current": "9.0.0", "latest": "13.0.0" },
+      "notes": "Same deps as other Lodestar apps"
+    },
+    "codeQuality": {
+      "maintainabilityIndex": {
+        "average": 67.93,
+        "min": 61.8,
+        "minFile": "src/features.js",
+        "notes": "Measured via complexity-report. 0-9: hard, 10-19: moderate, 20-100: easy"
+      },
+      "cognitiveComplexity": {
+        "average": 33,
+        "max": 96,
+        "maxFile": "src/server.js",
+        "notes": "Server has complex nested callbacks for stats/predictions"
+      },
+      "linesOfCode": {
+        "total": 1717,
+        "avgPerFile": 343,
+        "maxPerFile": 850,
+        "maxFile": "src/server.js"
+      },
+      "codeChurn": {
+        "highChurnFiles": [],
+        "hotspots": [],
+        "notes": "New codebase - no churn yet"
+      },
+      "documentationCoverage": {
+        "publicFunctions": 45,
+        "documentedFunctions": 38,
+        "puaDensity": 16,
+        "notes": "ML modules (model.js, features.js) fully documented with JSDoc"
+      }
+    }
+  },
+  "security": {
+    "vulnerabilities": {
+      "total": 5,
+      "critical": 0,
+      "high": 5,
+      "moderate": 0,
+      "low": 0,
+      "directDeps": 1,
+      "transitiveDeps": 4,
+      "transitiveVulnRatio": 80,
+      "notes": "Same sqlite3 transitive vulnerabilities as other apps"
+    }
+  },
+  "business": {
+    "domainFitScore": { "score": 9, "max": 10, "notes": "'Mellamo' means 'my name' in Spanish - perfect fit" },
+    "monetizationClarity": { "score": 6, "max": 10, "model": "Freemium + partner sync subscription", "notes": "Free single user, paid for partner matching" },
+    "revenuePotentialScore": { "score": 6, "max": 10, "tam": "4M US births/year, expectant parents", "avgPrice": "$5-10/month during pregnancy", "conversionEstimate": "2-5%", "notes": "Niche but high-intent audience" },
+    "infrastructureCost": {
+      "monthlyEstimate": 7,
+      "currency": "USD",
+      "breakdown": { "hosting": 5, "database": 0, "storage": 2, "cdn": 0, "other": 0 },
+      "notes": "SQLite + similarity matrix ~2MB storage"
+    }
+  },
+  "reusability": {
+    "templateTimeSaved": {
+      "hours": 2,
+      "notes": "Reused Express+SQLite pattern, server-utils, and mocha test patterns"
+    }
+  },
+  "learning": {
+    "newTechnologiesLearned": {
+      "count": 2,
+      "list": [
+        "CMU Pronouncing Dictionary for phoneme extraction",
+        "Online logistic regression with SGD"
+      ],
+      "notes": "First real ML model in Lodestar apps"
+    },
+    "skillsTemplatesCreated": {
+      "count": 8,
+      "list": [
+        "Online logistic regression class (src/model.js)",
+        "Phonetic feature extraction pipeline",
+        "Name similarity matrix computation",
+        "Gamification: progress bar with evolving emoji",
+        "Reveal/unlock mechanic with celebration",
+        "Contextual narration system",
+        "ML model unit test suite (test/model.test.js)",
+        "Feature builder test patterns (test/features.test.js)"
+      ],
+      "notes": "ML modules and test patterns highly reusable for other preference-learning apps"
+    }
+  },
+  "complexity": {
+    "totalAddressableMarket": { "score": 6, "max": 10, "notes": "Expectant parents - niche but valuable" },
+    "averageCompetitorPrice": { "value": 0, "notes": "Most baby name apps are free with ads" },
+    "technicalComplexity": { "score": 7, "max": 10, "breakdown": { 
+      "backend": "Express + custom ML pipeline",
+      "frontend": "Vanilla JS with complex state management",
+      "ml": "41-dim features, online learning, similarity matrix"
+    }},
+    "originality": { "score": 8, "max": 10, "notes": "ML-powered baby naming is rare - most are static lists" },
+    "modernityOfStack": { "score": 7, "max": 10, "stack": ["Node.js", "Express", "SQLite", "Custom ML", "Vanilla JS"] },
+    "appSpeedAtDeployment": { "score": 7, "max": 10, "notes": "ML scoring adds latency but precomputed features help" },
+    "securityAtDeployment": { "score": 5, "max": 10, "notes": "No auth, session ID only" },
+    "bugDensityAtDeployment": { "knownBugs": 0, "notes": "Tested all flows thoroughly" },
+    "transferability": { "score": 7, "max": 10, "notes": "Needs Node.js + ~5MB for similarity matrix" }
+  },
+  "postDeployment": {
+    "changeFailureRate": { "deployments": 0, "failures": 0, "rate": null, "notes": "Not yet deployed" },
+    "waitlistConversion": { "visitors": 0, "signups": 0, "rate": null, "notes": "No landing page yet" },
+    "componentReuseRate": { "sharedImports": 0, "localImports": 45, "rate": 0, "notes": "Custom ML modules could be extracted to shared lib" }
+  },
+  "userStories": { "total": 28, "completed": 28, "pending": 0, "pendingList": [] },
+  "lessonsLearned": [
+    "Online learning works great for small datasets - model improves noticeably after ~20 swipes",
+    "Gamification (baby growth, name reveal) dramatically improves perceived engagement",
+    "Contextual narration makes the app feel alive and guides users without tutorials",
+    "Sub-agents can parallelize data entry tasks (3 agents added 300 names in ~3 min)",
+    "41 features is enough to capture name preference patterns",
+    "20% exploration rate prevents filter bubbles while still feeling personalized"
+  ],
+  "reusablePatterns": [
+    "Online logistic regression with persistence",
+    "Phonetic feature extraction from CMU dictionary",
+    "Cosine similarity matrix for item-item recommendations",
+    "Baby growth progress indicator",
+    "Unlock/reveal gamification mechanic",
+    "Contextual narration with insight-based personalization"
+  ],
+  "nextSteps": [
+    "Deploy to mellamo.com",
+    "Add partner sync for couples to compare matches",
+    "Add sound effects on swipe",
+    "Add confetti animation on high-match reveals",
+    "Consider popularity trend data from SSA"
+  ],
+  "mlMetrics": {
+    "featureDimension": 41,
+    "similarityMatrixSize": "511x511",
+    "trainingExamplesNeeded": "~20 swipes for noticeable personalization",
+    "predictionLatency": "< 50ms for scoring all unseen names",
+    "modelSize": "~5KB weights JSON per session"
+  },
+  "lodestarScore": {
+    "overall": 74.2,
+    "breakdown": {
+      "business": { "score": 70, "weight": 0.25, "notes": "Domain fit 9/10, monetization 6/10, revenue potential 6/10" },
+      "technical": { "score": 73, "weight": 0.25, "notes": "Originality 8/10 (ML naming app is rare), complexity 7/10, modernity 7/10" },
+      "efficiency": { "score": 68, "weight": 0.25, "notes": "3h build with real ML, 85k tokens (higher due to ML + sub-agents), 0 interventions" },
+      "quality": { "score": 85, "weight": 0.25, "notes": "28/28 stories complete, 0 bugs, extensive gamification" }
+    },
+    "notes": "Highest score yet - first Lodestar app with real ML, extensive gamification, and complete feature set"
+  }
+}

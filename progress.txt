@@ -1,0 +1,70 @@
+# Ralph Progress Log
+Started: 2026-02-03
+Project: Mellamo - Baby Naming App with Active Learning
+
+## Codebase Patterns
+- Express server on port 3003
+- SQLite database in data/mellamo.db
+- Static files served from public/
+- Phonetics module: src/phonetics.js
+- Features module: src/features.js (41 dimensions)
+- Similarity module: src/similarity.js
+- Model module: src/model.js (online logistic regression)
+- CMU data: data/cmu-names.json
+- Similarity matrix: data/similarity-matrix.json
+
+---
+
+## 2026-02-03 - Complete Build
+
+### Core App (US-001 to US-020)
+- Express + SQLite + UUID stack
+- 511 baby names (204 boy, 222 girl, 85 neutral)
+- Diverse origins: Celtic, Scandinavian, Slavic, African, Asian, Middle Eastern, Latin American
+- Swipe cards with drag/touch/keyboard support
+- Session persistence via localStorage
+- Favorites and rejects management
+
+### ML Features (US-012, US-013)
+- 41-dimension feature vectors:
+  - Ending phoneme (16 one-hot)
+  - Starting phoneme class (6 one-hot)
+  - Syllable count (normalized)
+  - Stress pattern (7 one-hot)
+  - Sonorant ratio, vowel ratio
+  - Gender score
+  - Origin cluster (8 one-hot)
+- Online logistic regression with SGD
+- L2 regularization (0.01), learning rate (0.1)
+- Name similarity matrix (cosine on phonetic vectors)
+- Model weights persist in session
+
+### Gamification Features
+- **Baby Growth Progress** (US-025): Emoji evolves 🥚→🫘→🦠→🐛→🐣→👶 as model trains
+- **Name Reveal** (US-026): Top prediction locked until 20 swipes, celebration popup on reveal
+- **Exploration Slider** (US-023): User controls randomness 0-100%
+- **Top 30 Predictions Modal** (US-027): Crystal ball button shows live predictions
+- **Contextual Narration** (US-028): Tips and personalized insights every 3 swipes
+
+### UI Components
+- Match % badge on cards (color-coded by score)
+- Stats bar with top prediction display
+- Favorites modal (sorted A-Z)
+- Rejects modal (sorted A-Z, with undo)
+- Insights modal (learned preferences)
+- Start Over button with confirmation
+- Gender filter dropdown
+
+### Files
+- src/server.js - Express app with all APIs
+- src/phonetics.js - CMU phoneme processing
+- src/features.js - Feature vector builder
+- src/similarity.js - Phonetic similarity
+- src/model.js - Online logistic regression
+- public/index.html, app.js, styles.css - Frontend
+- seed.js - 511 names
+- compute-features.js - Precompute features + similarity
+
+---
+
+<promise>COMPLETE</promise>

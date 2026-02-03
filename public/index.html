@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Mellamo - Find Your Baby's Name</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <h1>🍼 Mellamo</h1>
+      <div class="header-actions">
+        <button id="reset-header-btn" class="btn-icon" title="Start Over">
+          🔄
+        </button>
+        <button id="insights-btn" class="btn-icon" title="Model Insights">
+          🧠
+        </button>
+        <button id="rejects-btn" class="btn-icon" title="Rejected Names">
+          👎 <span id="rejects-count">0</span>
+        </button>
+        <button id="predictions-btn" class="btn-icon" title="Top Predictions">
+          🔮
+        </button>
+        <button id="favorites-btn" class="btn-icon" title="Favorites">
+          ❤️ <span id="favorites-count">0</span>
+        </button>
+        <select id="gender-filter" class="gender-select">
+          <option value="all">All</option>
+          <option value="boy">👦 Boys</option>
+          <option value="girl">👧 Girls</option>
+          <option value="neutral">⭐ Neutral</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <span id="swipe-count">0</span> swiped · <span id="percent-complete">0</span>% complete
+      <span id="top-prediction-stat" class="top-prediction-stat hidden">
+        · Top match: <strong id="top-prediction-name">-</strong> (<span id="top-prediction-percent">-</span>%)
+      </span>
+      <span id="top-prediction-locked" class="top-prediction-locked">
+        · 🔒 Top match unlocks in <strong id="swipes-until-reveal">20</strong> swipes
+      </span>
+    </div>
+    
+    <!-- Baby growth progress -->
+    <div class="baby-growth-bar">
+      <div class="growth-container">
+        <div class="baby-stage" id="baby-stage">🥚</div>
+        <div class="growth-track">
+          <div class="growth-fill" id="growth-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="growth-label" id="growth-label">Just started...</div>
+    </div>
+
+    <!-- Exploration slider -->
+    <div class="exploration-bar">
+      <label for="exploration-slider">🎲 Exploration:</label>
+      <input type="range" id="exploration-slider" min="0" max="100" value="20">
+      <span id="exploration-value">20%</span>
+    </div>
+
+    <!-- Main content area -->
+    <main class="main">
+      <!-- Onboarding / Starter names -->
+      <div id="onboarding" class="onboarding hidden">
+        <h2>Let's find your perfect name! ✨</h2>
+        <p>Start by telling us names you already love:</p>
+        <textarea id="starter-names" placeholder="Enter names you like, separated by commas&#10;e.g., Luna, Finn, River"></textarea>
+        <div class="onboarding-buttons">
+          <button id="skip-starter" class="btn btn-secondary">Skip</button>
+          <button id="submit-starter" class="btn btn-primary">Start with these</button>
+        </div>
+      </div>
+
+      <!-- Card container -->
+      <div id="card-container" class="card-container hidden">
+        <div id="name-card" class="name-card">
+          <div class="match-badge" id="card-match">
+            <span class="match-percent" id="card-match-percent">50</span>%
+            <span class="match-label">match</span>
+          </div>
+          <div class="card-content">
+            <span class="gender-icon" id="card-gender-icon">👶</span>
+            <h2 class="card-name" id="card-name">Loading...</h2>
+            <p class="card-origin" id="card-origin">Origin</p>
+            <p class="card-meaning" id="card-meaning">Meaning goes here</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty / Complete states -->
+      <div id="empty-state" class="empty-state hidden">
+        <h2>🎉 All done!</h2>
+        <p>You've reviewed all the names.</p>
+        <p>You have <strong id="final-favorites">0</strong> favorites!</p>
+        
+        <div id="predictions-section" class="predictions-section">
+          <h3>🔮 Top 30 Names For You</h3>
+          <p class="predictions-subtitle">Based on your learned preferences</p>
+          <div id="predictions-list" class="predictions-list">
+            <p class="loading-predictions">Calculating predictions...</p>
+          </div>
+        </div>
+        
+        <button id="reset-btn" class="btn btn-primary">Start Over</button>
+      </div>
+
+      <!-- Control buttons -->
+      <div id="controls" class="controls hidden">
+        <!-- Narration toast (above buttons) -->
+        <div id="narration-toast" class="narration-toast hidden">
+          <span id="narration-text"></span>
+        </div>
+        <div class="controls-buttons">
+          <button id="undo-btn" class="btn btn-undo" disabled title="Undo">↩️</button>
+          <button id="nope-btn" class="btn btn-nope" title="Nope">👎</button>
+          <button id="love-btn" class="btn btn-love" title="Love it!">❤️</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Favorites modal -->
+    <div id="favorites-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>❤️ Your Favorites</h2>
+          <button id="close-favorites-modal" class="btn-close">&times;</button>
+        </div>
+        <div id="favorites-list" class="favorites-list">
+          <p class="empty-favorites">No favorites yet. Start swiping!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rejects modal -->
+    <div id="rejects-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>👎 Rejected Names</h2>
+          <button id="close-rejects-modal" class="btn-close">&times;</button>
+        </div>
+        <div id="rejects-list" class="favorites-list">
+          <p class="empty-favorites">No rejected names yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Predictions modal -->
+    <div id="predictions-modal" class="modal hidden">
+      <div class="modal-content modal-tall">
+        <div class="modal-header">
+          <h2>🔮 Top 30 Predictions</h2>
+          <button id="close-predictions-modal" class="btn-close">&times;</button>
+        </div>
+        <div id="predictions-modal-list" class="favorites-list">
+          <p class="empty-favorites">Keep swiping to train the model!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights modal -->
+    <div id="insights-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🧠 Your Taste Profile</h2>
+          <button id="close-insights-modal" class="btn-close">&times;</button>
+        </div>
+        <div id="insights-content" class="insights-content">
+          <p class="loading-insights">Analyzing your preferences...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

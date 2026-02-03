@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Development files
+*.md
+!README.md
+test/
+*.test.js
+
+# Config files
+.git
+.gitignore
+.env*
+
+# Data (will be created at runtime)
+data/*.db
+data/*.json
+
+# Build artifacts
+*.log
+.DS_Store

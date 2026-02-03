@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Database (generated, not versioned)
+data/*.db
+
+# Editor/OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log

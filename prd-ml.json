@@ -1,0 +1,200 @@
+{
+  "project": "Mellamo ML Enhancement",
+  "branchName": "ralph/mellamo-ml-features",
+  "description": "Add real ML features to Mellamo: phonetic features from CMU dictionary, name similarity matrix, and online logistic regression for preference learning.",
+  "userStories": [
+    {
+      "id": "ML-001",
+      "title": "Add CMU phonetic dictionary data",
+      "description": "As a developer, I need phonetic data for names to extract features.",
+      "acceptanceCriteria": [
+        "Create data/cmu-names.json with phonetic transcriptions for seeded names",
+        "Include ARPAbet phoneme sequences for each name",
+        "Cover at least 180 of the 200 names (some may not be in CMU)",
+        "Add fallback phonetic estimation for missing names",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "All 200 names covered in CMU dictionary"
+    },
+    {
+      "id": "ML-002",
+      "title": "Create phonetic feature extraction module",
+      "description": "As a developer, I need functions to extract phonetic features from names.",
+      "acceptanceCriteria": [
+        "Create src/phonetics.js module",
+        "Function: getEndingPhoneme(phonemes) returns category (15 categories)",
+        "Function: getStartingPhonemeClass(phonemes) returns class (vowel/stop/fricative/nasal/liquid)",
+        "Function: getSyllableCount(phonemes) returns integer",
+        "Function: getStressPattern(phonemes) returns pattern string",
+        "Function: getSonorantRatio(phonemes) returns float 0-1",
+        "Function: getVowelRatio(phonemes) returns float 0-1",
+        "Export all functions",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Also includes estimatePhonemes() fallback and category lists"
+    },
+    {
+      "id": "ML-003",
+      "title": "Create feature vector builder",
+      "description": "As a developer, I need to build complete feature vectors for names.",
+      "acceptanceCriteria": [
+        "Create src/features.js module",
+        "Function: buildFeatureVector(name, phonemes, metadata) returns numeric array",
+        "Features: ending_phoneme (one-hot 15), starting_class (one-hot 5), syllables (1), stress (one-hot 6), sonorant_ratio (1), vowel_ratio (1), gender_score (1), origin_cluster (one-hot 8)",
+        "Total vector dimension ~38",
+        "Function: getFeatureNames() returns array of feature names for interpretability",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "41 dimensions total, includes getFeatureDescription() for human-readable output"
+    },
+    {
+      "id": "ML-004",
+      "title": "Precompute features for all names",
+      "description": "As a developer, I need precomputed features stored in the database.",
+      "acceptanceCriteria": [
+        "Add features_json column to names table",
+        "Create compute-features.js script",
+        "Script computes and stores feature vector for each name",
+        "Add npm script: npm run compute-features",
+        "Verify all 200 names have features",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "All 200 names processed"
+    },
+    {
+      "id": "ML-005",
+      "title": "Compute name similarity matrix",
+      "description": "As a developer, I need pairwise name similarities for the model.",
+      "acceptanceCriteria": [
+        "Create src/similarity.js module",
+        "Function: computePhoneticVector(phonemes) returns dense vector",
+        "Function: cosineSimilarity(vec1, vec2) returns float -1 to 1",
+        "Precompute similarity matrix for all name pairs",
+        "Store as data/similarity-matrix.json",
+        "Function: getSimilarNames(nameId, topK) returns most similar names",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "78-dim phonetic vectors, similarity matrix saved"
+    },
+    {
+      "id": "ML-006",
+      "title": "Implement online logistic regression",
+      "description": "As a developer, I need an online learning algorithm that updates after each swipe.",
+      "acceptanceCriteria": [
+        "Create src/model.js module",
+        "Class: OnlineLogisticRegression with weights array",
+        "Method: predict(features) returns probability 0-1",
+        "Method: update(features, label, learningRate) updates weights via SGD",
+        "Method: toJSON() and fromJSON() for serialization",
+        "Default learning rate 0.1",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Includes L2 regularization and weight introspection methods"
+    },
+    {
+      "id": "ML-007",
+      "title": "Store model weights in session",
+      "description": "As a user, I want my learned model to persist across page refreshes.",
+      "acceptanceCriteria": [
+        "Add model_weights_json column to sessions table",
+        "Initialize new sessions with zero weights",
+        "Load weights when session resumes",
+        "Save weights after each swipe",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "ML-008",
+      "title": "Update swipe endpoint to train model",
+      "description": "As a user, I want my swipes to train the preference model.",
+      "acceptanceCriteria": [
+        "POST /api/session/:id/swipe loads current model weights",
+        "Retrieves feature vector for swiped name",
+        "Calls model.update() with features and label (right=1, left=0)",
+        "Saves updated weights to session",
+        "Returns updated match scores",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "ML-009",
+      "title": "Update next-name endpoint to use model predictions",
+      "description": "As a user, I want name suggestions ranked by the ML model.",
+      "acceptanceCriteria": [
+        "GET /api/session/:id/next loads model weights",
+        "Scores all unseen names using model.predict()",
+        "Adds similarity boost: if liked name X, boost names similar to X",
+        "Returns match_percent from model prediction (scaled to 20-99)",
+        "Still includes 20% exploration (random selection)",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": "Similarity boost weighted at 0.2x"
+    },
+    {
+      "id": "ML-010",
+      "title": "Add model insights API",
+      "description": "As a user, I want to understand what the model learned about my preferences.",
+      "acceptanceCriteria": [
+        "GET /api/session/:id/insights returns learned preferences",
+        "Shows top 5 positive feature weights with names",
+        "Shows top 5 negative feature weights with names",
+        "Example: 'You prefer: 2-syllable names, -a endings, Celtic origin'",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": "Returns human-readable descriptions"
+    },
+    {
+      "id": "ML-011",
+      "title": "Display model insights in UI",
+      "description": "As a user, I want to see what the app learned about my taste.",
+      "acceptanceCriteria": [
+        "Add 'Insights' button to header",
+        "Opens modal showing learned preferences",
+        "Updates after every 10 swipes",
+        "Shows friendly descriptions not raw feature names",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": true,
+      "notes": "Brain emoji button, shows likes/dislikes with strength bars"
+    },
+    {
+      "id": "ML-012",
+      "title": "Update seed-preferences to initialize model",
+      "description": "As a user, I want starter names to initialize the ML model.",
+      "acceptanceCriteria": [
+        "POST /api/session/:id/seed-preferences finds matching names",
+        "Treats matches as synthetic right-swipes",
+        "Runs model.update() for each matched name",
+        "Saves initialized weights",
+        "First real suggestions reflect starter preferences",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": true,
+      "notes": "Uses higher learning rate (0.2) for seeding"
+    }
+  ]
+}

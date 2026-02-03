@@ -1,0 +1,462 @@
+{
+  "project": "Mellamo",
+  "branchName": "ralph/mellamo-baby-names",
+  "description": "Mellamo - Data-First Baby Naming App with Active Learning. Swipe-based interface that learns user preferences using online logistic regression with phonetic features.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Project scaffolding and database schema",
+      "description": "As a developer, I need the basic project structure with Express, SQLite, and core database tables.",
+      "acceptanceCriteria": [
+        "Create package.json with express, sqlite3, uuid dependencies",
+        "Create src/server.js with Express app listening on port 3003",
+        "Create database schema: names table (id, name, gender, origin, meaning, popularity_score, features_json)",
+        "Create database schema: sessions table (id, created_at, preferences_json, model_weights_json)",
+        "Create database schema: swipes table (id, session_id, name_id, direction, created_at)",
+        "Run migrations on server start",
+        "Server responds to GET / with 200",
+        "Typecheck passes (no syntax errors)"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Implemented with runMigrations() on startup"
+    },
+    {
+      "id": "US-002",
+      "title": "Seed database with baby names",
+      "description": "As a developer, I need a seed script to populate the names table with diverse baby names.",
+      "acceptanceCriteria": [
+        "Create seed.js that populates at least 500 names",
+        "Names include mix of genders (boy, girl, neutral)",
+        "Names include various origins (English, Spanish, Hebrew, Arabic, Celtic, Scandinavian, Slavic, African, Asian, etc.)",
+        "Each name has a meaning and popularity_score (1-100)",
+        "Seed script is idempotent (can run multiple times safely)",
+        "Add npm script: npm run seed",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "511 names: 204 boy, 222 girl, 85 neutral from diverse global origins"
+    },
+    {
+      "id": "US-003",
+      "title": "Session management API",
+      "description": "As a user, I want to start a naming session so my preferences are tracked.",
+      "acceptanceCriteria": [
+        "POST /api/session creates new session, returns { sessionId }",
+        "GET /api/session/:id returns session data with swipe count",
+        "Sessions persist in SQLite",
+        "Invalid session ID returns 404",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Get next name API with ML selection",
+      "description": "As a user, I want to receive name suggestions ranked by the ML model.",
+      "acceptanceCriteria": [
+        "GET /api/session/:id/next returns a name not yet swiped in this session",
+        "Response includes: id, name, gender, origin, meaning, popularity_score, match_percent",
+        "Uses trained model to predict best names",
+        "Shows THE highest predicted name (not random from top 5)",
+        "Supports exploration parameter for user-controlled randomness",
+        "Returns 404 if session not found",
+        "Returns { complete: true } if all names have been swiped",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Exploration rate controlled by user slider (0-100%)"
+    },
+    {
+      "id": "US-005",
+      "title": "Record swipe API with model training",
+      "description": "As a user, I want my swipes to train the preference model.",
+      "acceptanceCriteria": [
+        "POST /api/session/:id/swipe accepts { nameId, direction: 'left'|'right' }",
+        "Swipe is recorded in swipes table",
+        "Model weights updated via online learning after each swipe",
+        "Returns { success: true, swipeCount, topPrediction }",
+        "Duplicate swipes on same name are rejected with 400",
+        "Invalid direction returns 400",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Uses online logistic regression with SGD"
+    },
+    {
+      "id": "US-006",
+      "title": "Get favorites API",
+      "description": "As a user, I want to see all names I've swiped right on.",
+      "acceptanceCriteria": [
+        "GET /api/session/:id/favorites returns array of liked names",
+        "Each name includes full details (name, gender, origin, meaning)",
+        "Ordered alphabetically by name",
+        "Empty array if no favorites yet",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Sorted A-Z"
+    },
+    {
+      "id": "US-007",
+      "title": "Basic HTML shell and static file serving",
+      "description": "As a user, I want a web interface to access the app.",
+      "acceptanceCriteria": [
+        "Create public/index.html with basic HTML5 structure",
+        "Include viewport meta tag for mobile",
+        "Add app title 'Mellamo' in header",
+        "Express serves static files from public/",
+        "GET / serves index.html",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Swipe card UI with match percentage",
+      "description": "As a user, I want to see names on swipeable cards with ML prediction score.",
+      "acceptanceCriteria": [
+        "Create public/app.js with card rendering logic",
+        "Card displays: name (large), gender icon, origin, meaning",
+        "Card shows match percentage badge from ML model",
+        "Badge color varies by score (green=high, yellow=medium, gray=low)",
+        "Card is centered and styled attractively",
+        "Add public/styles.css with card styling",
+        "Card has subtle shadow and rounded corners",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Swipe gesture and button controls",
+      "description": "As a user, I want to swipe or click buttons to rate names.",
+      "acceptanceCriteria": [
+        "Add left/right swipe detection on card (touch and mouse drag)",
+        "Add 'Nope' button (left) and 'Love' button (right) below card",
+        "Swipe/button triggers API call to record swipe",
+        "Card animates off screen in swipe direction",
+        "Next card loads automatically after swipe",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": "Supports mouse drag, touch, and keyboard (arrow keys)"
+    },
+    {
+      "id": "US-010",
+      "title": "Session persistence in browser",
+      "description": "As a user, I want my session to persist when I refresh the page.",
+      "acceptanceCriteria": [
+        "Store sessionId in localStorage on creation",
+        "On page load, check localStorage for existing session",
+        "If session exists and valid, resume it",
+        "If session invalid or missing, create new one",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Favorites panel UI",
+      "description": "As a user, I want to view my favorited names.",
+      "acceptanceCriteria": [
+        "Add 'Favorites' button/tab in header with heart icon",
+        "Clicking shows panel/modal with favorited names list",
+        "Names sorted alphabetically",
+        "Each favorite shows name, gender, origin",
+        "Panel can be closed to return to swiping",
+        "Favorites count shown on button (badge)",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "ML model with phonetic features",
+      "description": "As a user, I want the app to learn my preferences using real ML features.",
+      "acceptanceCriteria": [
+        "Extract phonetic features from CMU dictionary",
+        "Features: ending phoneme (16 categories), starting class (6), syllables, stress pattern (7), sonorant ratio, vowel ratio",
+        "Features: gender score, origin cluster (8 categories)",
+        "Total feature dimension ~41",
+        "Precompute features for all names (npm run compute-features)",
+        "Online logistic regression model with SGD",
+        "Model weights persist in session",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": true,
+      "notes": "Implemented in src/phonetics.js, src/features.js, src/model.js"
+    },
+    {
+      "id": "US-013",
+      "title": "Name similarity matrix",
+      "description": "As a user, I want similar names to be boosted when I like a name.",
+      "acceptanceCriteria": [
+        "Compute phonetic vectors for all names",
+        "Calculate cosine similarity between all name pairs",
+        "Store similarity matrix in data/similarity-matrix.json",
+        "Boost names similar to previously liked names",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": true,
+      "notes": "78-dimensional phonetic vectors, similarity boost weighted at 0.2x"
+    },
+    {
+      "id": "US-014",
+      "title": "Starter names input",
+      "description": "As a user, I want to provide names I already like to kickstart preferences.",
+      "acceptanceCriteria": [
+        "Add 'Start with names you like' option on first load",
+        "Text input accepts comma-separated names",
+        "POST /api/session/:id/seed-preferences accepts { names: string[] }",
+        "Matches input names to database and initializes model weights",
+        "Skip button available to start without seeding",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": true,
+      "notes": "Uses higher learning rate for seeding"
+    },
+    {
+      "id": "US-015",
+      "title": "Progress indicator with top match",
+      "description": "As a user, I want to see my swiping progress and current top predicted name.",
+      "acceptanceCriteria": [
+        "Show swipe count on main screen",
+        "Show percentage of names reviewed",
+        "Show current top predicted name and match % after model trained",
+        "Stats update after each swipe",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Gender filter option",
+      "description": "As a user, I want to filter names by gender preference.",
+      "acceptanceCriteria": [
+        "Add gender filter dropdown: All, Boy, Girl, Neutral",
+        "Filter persists in session preferences",
+        "Only show names matching filter",
+        "Can change filter at any time",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Undo last swipe",
+      "description": "As a user, I want to undo my last swipe if I made a mistake.",
+      "acceptanceCriteria": [
+        "Add 'Undo' button that appears after swiping",
+        "POST /api/session/:id/undo removes last swipe",
+        "Previous card reappears",
+        "Can only undo once (button disappears after use until next swipe)",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Mobile-responsive styling",
+      "description": "As a user, I want the app to work well on my phone.",
+      "acceptanceCriteria": [
+        "Cards scale appropriately on mobile screens",
+        "Buttons are touch-friendly (min 44px tap targets)",
+        "No horizontal scrolling on mobile",
+        "Text is readable without zooming",
+        "Typecheck passes"
+      ],
+      "priority": 18,
+      "passes": true,
+      "notes": "CSS includes mobile breakpoints and touch-friendly sizing"
+    },
+    {
+      "id": "US-019",
+      "title": "Completion screen with top 30 predictions",
+      "description": "As a user, I want to see the model's top 30 predicted names when I finish.",
+      "acceptanceCriteria": [
+        "Show 'All done!' message when no names left",
+        "Display top 30 predicted names from trained model",
+        "Show rank, name, origin, match percentage for each",
+        "Indicate which names were already favorited",
+        "Option to reset and start over",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "passes": true,
+      "notes": "Uses GET /api/session/:id/predictions endpoint"
+    },
+    {
+      "id": "US-020",
+      "title": "Remove from favorites",
+      "description": "As a user, I want to remove names from my favorites list.",
+      "acceptanceCriteria": [
+        "Each favorite has a remove/X button",
+        "DELETE /api/session/:id/favorites/:nameId removes from favorites",
+        "UI updates immediately on removal",
+        "Removed name can appear again in swipe queue",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Model insights API and UI",
+      "description": "As a user, I want to see what the model learned about my preferences.",
+      "acceptanceCriteria": [
+        "GET /api/session/:id/insights returns learned preferences",
+        "Shows top positive and negative feature weights",
+        "Human-readable descriptions for each feature",
+        "Add brain icon button in header",
+        "Modal shows likes/dislikes with strength bars",
+        "Typecheck passes"
+      ],
+      "priority": 21,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Rejects panel UI",
+      "description": "As a user, I want to view and manage names I rejected.",
+      "acceptanceCriteria": [
+        "Add 'Rejects' button in header with thumbs down icon",
+        "Shows all left-swiped names sorted alphabetically",
+        "Each reject has undo button to give another chance",
+        "DELETE /api/session/:id/rejects/:nameId removes from rejects",
+        "Rejects count shown on button (badge)",
+        "Typecheck passes"
+      ],
+      "priority": 22,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Exploration slider",
+      "description": "As a user, I want to control how much the app explores vs exploits.",
+      "acceptanceCriteria": [
+        "Add exploration slider below stats bar (0-100%)",
+        "0% = always show top prediction",
+        "100% = always random",
+        "Default 20%",
+        "Slider value passed to next-name API",
+        "Typecheck passes"
+      ],
+      "priority": 23,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Start Over button",
+      "description": "As a user, I want to reset and start fresh at any time.",
+      "acceptanceCriteria": [
+        "Add reset icon button in header",
+        "Shows confirmation dialog before resetting",
+        "Clears session from localStorage",
+        "Creates new session with fresh model",
+        "Returns to onboarding screen",
+        "Typecheck passes"
+      ],
+      "priority": 24,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "Baby growth progress indicator",
+      "description": "As a user, I want to see the model 'grow' as I swipe more.",
+      "acceptanceCriteria": [
+        "Add progress bar showing model training progress",
+        "Emoji above progress bar at end of fill line",
+        "Emoji evolves through stages: egg -> bean -> cell -> caterpillar -> hatching -> baby",
+        "Stages triggered at swipe milestones (0, 5, 15, 30, 50, 75, 100)",
+        "Animation when evolving to next stage",
+        "Label shows current stage description",
+        "Typecheck passes"
+      ],
+      "priority": 25,
+      "passes": true,
+      "notes": "Pink gradient fill with shimmer effect"
+    },
+    {
+      "id": "US-026",
+      "title": "Name reveal gamification",
+      "description": "As a user, I want the top prediction to be hidden until I've swiped enough.",
+      "acceptanceCriteria": [
+        "Top prediction locked until 20 swipes",
+        "Show countdown 'Top match unlocks in X swipes'",
+        "Celebration popup when threshold reached",
+        "Popup shows revealed name with match percentage",
+        "After reveal, top match shows in stats bar",
+        "Typecheck passes"
+      ],
+      "priority": 26,
+      "passes": true,
+      "notes": "Creates anticipation and motivation to keep swiping"
+    },
+    {
+      "id": "US-027",
+      "title": "Top 30 predictions modal",
+      "description": "As a user, I want to see my current top 30 predictions at any time.",
+      "acceptanceCriteria": [
+        "Add crystal ball icon button in header",
+        "Opens modal with top 30 predicted names",
+        "Sorted by ML score descending",
+        "Shows rank, name, gender, origin, match %",
+        "Indicates already-favorited names",
+        "Available after 3+ swipes",
+        "Typecheck passes"
+      ],
+      "priority": 27,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Contextual narration system",
+      "description": "As a user, I want helpful tips and insights as I swipe.",
+      "acceptanceCriteria": [
+        "Show narration toast every 3 swipes",
+        "Toast appears above like/dislike buttons (non-blocking)",
+        "Early tips: UI hints (favorites, drag, keyboard)",
+        "Mid-game: encouragement and feature discovery",
+        "Personalized insights based on model (e.g., 'You like Celtic names!')",
+        "Milestone celebrations (30, 60, 99 swipes)",
+        "Each narration shown only once per session",
+        "Auto-dismiss after 4 seconds",
+        "Typecheck passes"
+      ],
+      "priority": 28,
+      "passes": true,
+      "notes": "Fetches insights API for personalized messages"
+    }
+  ]
+}

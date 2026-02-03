@@ -1,0 +1,22 @@
+{
+  "name": "mellamo",
+  "version": "1.0.0",
+  "description": "Data-First Baby Naming App with Active Learning",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node seed.js",
+    "migrate": "node migrate.js",
+    "compute-features": "node compute-features.js",
+    "test": "mocha 'test/**/*.test.js'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^11.7.5"
+  }
+}

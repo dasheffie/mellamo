@@ -1,0 +1,65 @@
+# Ralph Progress Log - ML Enhancement
+Started: 2026-02-03
+Project: Mellamo ML Features
+
+## Codebase Patterns
+- Phonetics module: src/phonetics.js
+- Features module: src/features.js  
+- Similarity module: src/similarity.js
+- Model module: src/model.js
+- CMU data: data/cmu-names.json
+- Similarity matrix: data/similarity-matrix.json
+- Feature vectors stored in names.features_json
+- Model weights stored in sessions.model_weights_json
+- Feature dimension: 41
+
+---
+
+## 2026-02-03 - Complete ML Implementation (ML-001 through ML-012)
+
+### Files Created:
+- `data/cmu-names.json` - ARPAbet phonetic transcriptions for all 200 names
+- `src/phonetics.js` - Feature extraction (endings, syllables, stress, ratios)
+- `src/features.js` - Feature vector builder (41 dimensions)
+- `src/similarity.js` - Phonetic similarity matrix computation
+- `src/model.js` - Online logistic regression with SGD
+- `compute-features.js` - Precompute features + similarity matrix
+
+### Features Implemented:
+
+**Phonetic Features (from CMU dictionary):**
+- Ending phoneme (16 one-hot categories: schwa, ee, oh, n, m, l, etc.)
+- Starting phoneme class (6 categories: vowel, stop, fricative, nasal, liquid)
+- Syllable count (normalized)
+- Stress pattern (7 categories: mono, trochee, iamb, dactyl, etc.)
+- Sonorant ratio (0-1)
+- Vowel ratio (0-1)
+
+**Metadata Features:**
+- Gender score (-0.8 to 0.8)
+- Origin cluster (8 categories: Hebrew, Celtic, Romance, Germanic, Slavic, Asian, Arabic/African, Other)
+
+**Similarity:**
+- 78-dimensional phonetic vectors (phoneme frequency + position-weighted)
+- Cosine similarity for all 200x200 name pairs
+- Similarity boost for names similar to liked names
+
+**Online Learning:**
+- Logistic regression with SGD (learning rate 0.1)
+- L2 regularization (0.01)
+- Model persists in session between page loads
+- 20% exploration rate for diversity
+
+### UI Updates:
+- 🧠 Insights button shows learned preferences
+- Human-readable descriptions (e.g., "Names ending in -a (Luna, Emma)")
+- Strength bars for preference intensity
+
+### Learnings:
+- All 200 names have CMU dictionary entries (no fallback needed)
+- Similarity examples: Liam→Lena (86%), Noah→Nina (78%)
+- Feature dimension 41 is manageable for online learning
+
+---
+
+<promise>COMPLETE</promise>
