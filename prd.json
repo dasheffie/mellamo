@@ -227,12 +227,13 @@
         "Text input accepts comma-separated names",
         "POST /api/session/:id/seed-preferences accepts { names: string[] }",
         "Matches input names to database and initializes model weights",
+        "Each seed name trained once (same weight as a normal swipe)",
         "Skip button available to start without seeding",
         "Typecheck passes"
       ],
       "priority": 14,
       "passes": true,
-      "notes": "Uses higher learning rate for seeding"
+      "notes": "Seed names train model once per name (equal to normal swipe). No artificial boosting - favorites shown separately in favorites list."
     },
     {
       "id": "US-015",
@@ -296,11 +297,11 @@
     },
     {
       "id": "US-019",
-      "title": "Completion screen with top 30 predictions",
-      "description": "As a user, I want to see the model's top 30 predicted names when I finish.",
+      "title": "Completion screen with top 60 predictions",
+      "description": "As a user, I want to see the model's top 60 predicted names when I finish.",
       "acceptanceCriteria": [
         "Show 'All done!' message when no names left",
-        "Display top 30 predicted names from trained model",
+        "Display top 60 predicted names from trained model",
         "Show rank, name, origin, match percentage for each",
         "Indicate which names were already favorited",
         "Option to reset and start over",
@@ -308,7 +309,7 @@
       ],
       "priority": 19,
       "passes": true,
-      "notes": "Uses GET /api/session/:id/predictions endpoint"
+      "notes": "Uses GET /api/session/:id/predictions endpoint. Changed from 30 to 60."
     },
     {
       "id": "US-020",
@@ -420,24 +421,25 @@
       ],
       "priority": 26,
       "passes": true,
-      "notes": "Creates anticipation and motivation to keep swiping"
+      "notes": "REMOVED: Top match display removed from stats bar. Users can view predictions in the Top 60 modal instead."
     },
     {
       "id": "US-027",
-      "title": "Top 30 predictions modal",
-      "description": "As a user, I want to see my current top 30 predictions at any time.",
+      "title": "Top 60 predictions modal",
+      "description": "As a user, I want to see my current top 60 predictions at any time.",
       "acceptanceCriteria": [
         "Add crystal ball icon button in header",
-        "Opens modal with top 30 predicted names",
-        "Sorted by ML score descending",
+        "Opens modal with top 60 predicted names",
+        "Sorted by ML score descending (pure ML ranking, no favorites boost)",
         "Shows rank, name, gender, origin, match %",
         "Indicates already-favorited names",
         "Available after 3+ swipes",
+        "Respects gender filter setting",
         "Typecheck passes"
       ],
       "priority": 27,
       "passes": true,
-      "notes": ""
+      "notes": "Changed from 30 to 60 predictions. Predictions sorted purely by ML score - favorites shown in separate favorites list."
     },
     {
       "id": "US-028",
@@ -457,6 +459,69 @@
       "priority": 28,
       "passes": true,
       "notes": "Fetches insights API for personalized messages"
+    },
+    {
+      "id": "US-029",
+      "title": "Button glow animations on swipe",
+      "description": "As a user, I want visual feedback on header buttons when I swipe.",
+      "acceptanceCriteria": [
+        "When swiping right (like), favorites button glows and pulses",
+        "When swiping left (reject), rejects button glows and pulses",
+        "Insights button glows on every swipe (model learns)",
+        "Predictions button glows on every swipe (predictions update)",
+        "Count badges briefly scale up and turn red",
+        "Animations are smooth and non-blocking",
+        "Typecheck passes"
+      ],
+      "priority": 29,
+      "passes": true,
+      "notes": "CSS keyframe animations: emojiGlowPulse and badgePop"
+    },
+    {
+      "id": "US-030",
+      "title": "Large centered logo above name card",
+      "description": "As a user, I want to see a prominent logo in the main content area.",
+      "acceptanceCriteria": [
+        "Large baby bottle emoji (🍼) and 'Mellamo' text above the card",
+        "Logo positioned between exploration slider and name card",
+        "Bottle emoji has gentle bounce animation",
+        "Logo text is large and prominent (2.5rem)",
+        "Header no longer contains logo (moved to main area)",
+        "Responsive sizing on mobile",
+        "Typecheck passes"
+      ],
+      "priority": 30,
+      "passes": true,
+      "notes": "Logo uses gentleBounce CSS animation. Tight spacing between slider and logo."
+    },
+    {
+      "id": "US-031",
+      "title": "Gender filter applies to predictions",
+      "description": "As a user, I want the predictions to respect my gender filter.",
+      "acceptanceCriteria": [
+        "Top 60 predictions modal only shows names matching gender filter",
+        "Changing gender filter updates predictions list",
+        "Boy filter shows only boy names in predictions",
+        "Girl filter shows only girl names in predictions",
+        "Typecheck passes"
+      ],
+      "priority": 31,
+      "passes": true,
+      "notes": "Fixed bug where predictions endpoint ignored gender_filter"
+    },
+    {
+      "id": "US-032",
+      "title": "Cache-busting for API calls",
+      "description": "As a user, I want fresh data when I change filters or swipe.",
+      "acceptanceCriteria": [
+        "Next name API calls include timestamp parameter to prevent caching",
+        "Browser does not return stale cached responses",
+        "Gender filter changes immediately take effect",
+        "Typecheck passes"
+      ],
+      "priority": 32,
+      "passes": true,
+      "notes": "Added &_t=${Date.now()} to /next API calls to bust browser cache"
     }
   ]
 }
