@@ -79,15 +79,15 @@ class MellamoApp {
     this.growthFill = document.getElementById('growth-fill');
     this.growthLabel = document.getElementById('growth-label');
     
-    // Baby growth stages
+    // Chick growth stages (egg → hatching → chick)
     this.babyStages = [
       { emoji: '🥚', label: 'Just started...', minSwipes: 0 },
-      { emoji: '🫘', label: 'Forming preferences...', minSwipes: 5 },
-      { emoji: '🦠', label: 'Learning patterns...', minSwipes: 15 },
-      { emoji: '🐛', label: 'Growing quickly!', minSwipes: 30 },
-      { emoji: '🐣', label: 'Almost there...', minSwipes: 50 },
-      { emoji: '👶', label: 'Ready to name!', minSwipes: 75 },
-      { emoji: '👶🏻', label: 'Model trained!', minSwipes: 100 },
+      { emoji: '🥚', label: 'Warming up...', minSwipes: 5 },
+      { emoji: '🥚', label: 'Learning patterns...', minSwipes: 15 },
+      { emoji: '🐣', label: 'Hatching!', minSwipes: 30 },
+      { emoji: '🐤', label: 'Almost there...', minSwipes: 50 },
+      { emoji: '🐥', label: 'Ready to name!', minSwipes: 75 },
+      { emoji: '🐔', label: 'Model trained!', minSwipes: 100 },
     ];
     this.currentStageIndex = 0;
     
@@ -568,7 +568,7 @@ class MellamoApp {
       narrations.push({ id: 'milestone_60', text: "🚀 60 swipes! The model knows you better than you know yourself!" });
     }
     if (swipeCount === 99 && !this.shownNarrations.has('milestone_99')) {
-      narrations.push({ id: 'milestone_99', text: "👶 One more swipe and your baby is fully grown!" });
+      narrations.push({ id: 'milestone_99', text: "🐥 One more swipe and your chick is fully grown!" });
     }
     
     // Generic encouragements (fallback)
