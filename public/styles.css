@@ -124,13 +124,100 @@ body {
   to { opacity: 0; transform: translateY(-10px); }
 }
 
-#favorites-count {
+#favorites-count, #rejects-count, #insights-count, #predictions-count {
   background: var(--primary);
   color: white;
   font-size: 0.75rem;
   padding: 2px 6px;
   border-radius: 10px;
   margin-left: 4px;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+#rejects-count {
+  background: var(--danger);
+}
+
+#insights-count {
+  background: var(--secondary);
+}
+
+#predictions-count {
+  background: #667eea;
+}
+
+/* Glow pulse animation for emoji buttons */
+@keyframes emojiGlowPulse {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+    transform: scale(1);
+  }
+  25% {
+    filter: brightness(1.3) drop-shadow(0 0 12px currentColor);
+    transform: scale(1.15);
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 20px currentColor);
+    transform: scale(1.25);
+  }
+  75% {
+    filter: brightness(1.3) drop-shadow(0 0 12px currentColor);
+    transform: scale(1.15);
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+    transform: scale(1);
+  }
+}
+
+.btn-icon.glow-pulse {
+  animation: emojiGlowPulse 0.6s ease-out;
+  color: inherit;
+}
+
+/* Specific glow colors for each button */
+#favorites-btn.glow-pulse {
+  color: #ff6b9d;
+  filter: drop-shadow(0 0 15px #ff6b9d);
+}
+
+#rejects-btn.glow-pulse {
+  color: #ff7675;
+  filter: drop-shadow(0 0 15px #ff7675);
+}
+
+#insights-btn.glow-pulse {
+  color: #6c5ce7;
+  filter: drop-shadow(0 0 15px #6c5ce7);
+}
+
+#predictions-btn.glow-pulse {
+  color: #667eea;
+  filter: drop-shadow(0 0 15px #667eea);
+}
+
+/* Badge pop animation */
+@keyframes badgePop {
+  0% {
+    transform: scale(1);
+    background: inherit;
+  }
+  30% {
+    transform: scale(1.5);
+    background: #ff4444;
+  }
+  60% {
+    transform: scale(1.3);
+    background: #ff4444;
+  }
+  100% {
+    transform: scale(1);
+    background: inherit;
+  }
+}
+
+.badge-pop {
+  animation: badgePop 0.5s ease-out;
 }
 
 .gender-select {

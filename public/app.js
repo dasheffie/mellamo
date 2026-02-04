@@ -67,9 +67,7 @@ class MellamoApp {
     this.favoritesCountEl = document.getElementById('favorites-count');
     this.finalFavoritesEl = document.getElementById('final-favorites');
     this.favoritesList = document.getElementById('favorites-list');
-    this.topPredictionStat = document.getElementById('top-prediction-stat');
-    this.topPredictionName = document.getElementById('top-prediction-name');
-    this.topPredictionPercent = document.getElementById('top-prediction-percent');
+    // Top prediction display removed
     this.rejectsCountEl = document.getElementById('rejects-count');
     this.insightsCountEl = document.getElementById('insights-count');
     this.predictionsCountEl = document.getElementById('predictions-count');
@@ -92,11 +90,7 @@ class MellamoApp {
     ];
     this.currentStageIndex = 0;
     
-    // Name reveal feature
-    this.REVEAL_THRESHOLD = 20;
-    this.hasRevealed = false;
-    this.topPredictionLocked = document.getElementById('top-prediction-locked');
-    this.swipesUntilReveal = document.getElementById('swipes-until-reveal');
+    // Name reveal feature removed
     
     // Narration feature
     this.narrationToast = document.getElementById('narration-toast');
@@ -234,6 +228,7 @@ class MellamoApp {
       // Update favorites count immediately
       if (result.addedToFavorites) {
         this.favoritesCountEl.textContent = result.addedToFavorites;
+        this.animateButtonFeedback('favorites-btn', 'favorites-count');
         this.drawAttentionToFavorites();
       }
     } catch (err) {
@@ -287,6 +282,42 @@ class MellamoApp {
     } catch (err) {
       console.error('Failed to show preview:', err);
     }
+  }
+
+  // Animate button with glow pulse effect
+  animateButtonGlow(buttonId) {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+    
+    // Remove any existing animation
+    btn.classList.remove('glow-pulse');
+    // Force reflow to restart animation
+    void btn.offsetWidth;
+    btn.classList.add('glow-pulse');
+    
+    // Remove class after animation completes
+    setTimeout(() => btn.classList.remove('glow-pulse'), 600);
+  }
+
+  // Animate badge with pop effect
+  animateBadgePop(countElementId) {
+    const badge = document.getElementById(countElementId);
+    if (!badge) return;
+    
+    // Remove any existing animation
+    badge.classList.remove('badge-pop');
+    // Force reflow to restart animation
+    void badge.offsetWidth;
+    badge.classList.add('badge-pop');
+    
+    // Remove class after animation completes
+    setTimeout(() => badge.classList.remove('badge-pop'), 500);
+  }
+
+  // Combined animation for button + badge
+  animateButtonFeedback(buttonId, countId) {
+    this.animateButtonGlow(buttonId);
+    this.animateBadgePop(countId);
   }
 
   showComplete() {
@@ -363,12 +394,20 @@ class MellamoApp {
         this.undoBtn.disabled = false;
         await this.updateStats();
         
-        // Update top prediction display
-        if (result.topPrediction) {
-          this.topPredictionStat.classList.remove('hidden');
-          this.topPredictionName.textContent = result.topPrediction.name;
-          this.topPredictionPercent.textContent = result.topPrediction.match_percent;
+        // Animate the appropriate button based on swipe direction
+        if (direction === 'right') {
+          // Liked - animate favorites
+          this.animateButtonFeedback('favorites-btn', 'favorites-count');
+        } else {
+          // Rejected - animate rejects
+          this.animateButtonFeedback('rejects-btn', 'rejects-count');
         }
+        
+        // Always animate insights (model learns from every swipe)
+        this.animateButtonFeedback('insights-btn', 'insights-count');
+        
+        // Always animate predictions (they update with every swipe)
+        this.animateButtonFeedback('predictions-btn', 'predictions-count');
         
         // Check for narration (every 3 swipes)
         if (result.swipeCount % 3 === 0 && result.swipeCount !== this.lastNarrationSwipe) {
@@ -434,15 +473,9 @@ class MellamoApp {
       this.finalFavoritesEl.textContent = stats.favoritesCount;
       this.rejectsCountEl.textContent = stats.rejectsCount || 0;
       this.insightsCountEl.textContent = stats.swipeCount; // Model learns from swipes
-      this.predictionsCountEl.textContent = '30'; // Always show top 30
       
-      // Update top prediction (always visible, no reveal mechanic)
-      this.topPredictionLocked.classList.add('hidden');
-      if (stats.topPrediction) {
-        this.topPredictionStat.classList.remove('hidden');
-        this.topPredictionName.textContent = stats.topPrediction.name;
-        this.topPredictionPercent.textContent = stats.topPrediction.match_percent;
-      }
+      // Show 60 predictions only when model has enough training data (3+ swipes)
+      this.predictionsCountEl.textContent = stats.modelUpdateCount >= 3 ? 60 : 0;
       
       // Update baby growth
       this.updateBabyGrowth(stats.swipeCount);
@@ -709,7 +742,7 @@ class MellamoApp {
     this.predictionsModalList.innerHTML = '<p class="loading-predictions">Loading predictions...</p>';
     
     try {
-      const response = await fetch(`/api/session/${this.sessionId}/predictions?limit=30`);
+      const response = await fetch(`/api/session/${this.sessionId}/predictions?limit=60`);
       const data = await response.json();
       
       if (!data.predictions || data.predictions.length === 0 || data.modelUpdateCount < 3) {
@@ -802,7 +835,7 @@ class MellamoApp {
     predictionsList.innerHTML = '<p class="loading-predictions">Calculating predictions...</p>';
     
     try {
-      const response = await fetch(`/api/session/${this.sessionId}/predictions?limit=30`);
+      const response = await fetch(`/api/session/${this.sessionId}/predictions?limit=60`);
       const data = await response.json();
       
       if (!data.predictions || data.predictions.length === 0) {
@@ -910,9 +943,6 @@ class MellamoApp {
     await this.createSession();
     this.canUndo = false;
     this.undoBtn.disabled = true;
-    this.hasRevealed = false;
-    this.topPredictionStat.classList.add('hidden');
-    this.topPredictionLocked.classList.remove('hidden');
     this.currentStageIndex = 0;
     this.showOnboarding();
     await this.updateStats();

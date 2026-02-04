@@ -646,14 +646,13 @@ app.post('/api/session/:id/seed-preferences', (req, res) => {
       async (err, matchedNames) => {
         if (err) return res.status(500).json({ error: 'Database error' });
         
-        // Initialize model with matched names as synthetic positive examples
+        // Initialize model with matched names as positive examples
         const model = getModelForSession(session);
         
         for (const name of matchedNames) {
           const featureVector = getFeatureVector(name);
-          // Treat as strong positive signal (multiple updates)
-          model.update(featureVector, 1, 0.2);  // Higher learning rate for seeding
-          model.update(featureVector, 1, 0.15);
+          // Single training update per name (same as a normal right swipe)
+          model.update(featureVector, 1);
         }
         
         // Save model
@@ -754,8 +753,12 @@ app.get('/api/session/:id/predictions', (req, res) => {
             };
           });
           
-          // Sort by ML score and return top N
-          scoredNames.sort((a, b) => b.ml_score - a.ml_score);
+          // Sort: favorites float to top, then by ML score
+          scoredNames.sort((a, b) => {
+            if (a.was_favorited && !b.was_favorited) return -1;
+            if (!a.was_favorited && b.was_favorited) return 1;
+            return b.ml_score - a.ml_score;
+          });
           
           res.json({
             predictions: scoredNames.slice(0, limit),

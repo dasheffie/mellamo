@@ -19,7 +19,7 @@
           🧠 <span id="insights-count">0</span>
         </button>
         <button id="predictions-btn" class="btn-icon" title="Top Predictions">
-          🔮 <span id="predictions-count">30</span>
+          🔮 <span id="predictions-count">60</span>
         </button>
         <button id="rejects-btn" class="btn-icon" title="Rejected Names">
           👎 <span id="rejects-count">0</span>
@@ -39,12 +39,6 @@
     <!-- Stats bar -->
     <div class="stats-bar">
       <span id="swipe-count">0</span> swiped · <span id="percent-complete">0</span>% complete
-      <span id="top-prediction-stat" class="top-prediction-stat hidden">
-        · Top match: <strong id="top-prediction-name">-</strong> (<span id="top-prediction-percent">-</span>%)
-      </span>
-      <span id="top-prediction-locked" class="top-prediction-locked">
-        · 🔒 Top match unlocks in <strong id="swipes-until-reveal">20</strong> swipes
-      </span>
     </div>
     
     <!-- Baby growth progress -->
@@ -101,7 +95,7 @@
         <p>You have <strong id="final-favorites">0</strong> favorites!</p>
         
         <div id="predictions-section" class="predictions-section">
-          <h3>🔮 Top 30 Names For You</h3>
+          <h3>🔮 Top 60 Names For You</h3>
           <p class="predictions-subtitle">Based on your learned preferences</p>
           <div id="predictions-list" class="predictions-list">
             <p class="loading-predictions">Calculating predictions...</p>
@@ -155,7 +149,7 @@
     <div id="predictions-modal" class="modal hidden">
       <div class="modal-content modal-tall">
         <div class="modal-header">
-          <h2>🔮 Top 30 Predictions</h2>
+          <h2>🔮 Top 60 Predictions</h2>
           <button id="close-predictions-modal" class="btn-close">&times;</button>
         </div>
         <div id="predictions-modal-list" class="favorites-list">
