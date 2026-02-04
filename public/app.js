@@ -71,6 +71,8 @@ class MellamoApp {
     this.topPredictionName = document.getElementById('top-prediction-name');
     this.topPredictionPercent = document.getElementById('top-prediction-percent');
     this.rejectsCountEl = document.getElementById('rejects-count');
+    this.insightsCountEl = document.getElementById('insights-count');
+    this.predictionsCountEl = document.getElementById('predictions-count');
     this.rejectsModal = document.getElementById('rejects-modal');
     this.rejectsList = document.getElementById('rejects-list');
     this.explorationSlider = document.getElementById('exploration-slider');
@@ -431,6 +433,8 @@ class MellamoApp {
       this.favoritesCountEl.textContent = stats.favoritesCount;
       this.finalFavoritesEl.textContent = stats.favoritesCount;
       this.rejectsCountEl.textContent = stats.rejectsCount || 0;
+      this.insightsCountEl.textContent = stats.swipeCount; // Model learns from swipes
+      this.predictionsCountEl.textContent = '30'; // Always show top 30
       
       // Update top prediction (always visible, no reveal mechanic)
       this.topPredictionLocked.classList.add('hidden');
