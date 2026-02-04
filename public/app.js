@@ -83,8 +83,9 @@ class MellamoApp {
     this.babyStages = [
       { emoji: '🪹', label: 'Just started...', minSwipes: 0 },
       { emoji: '🪺', label: 'Warming up...', minSwipes: 10 },
-      { emoji: '🐣', label: 'Hatching!', minSwipes: 30 },
-      { emoji: '🐤', label: 'Almost there...', minSwipes: 60 },
+      { emoji: '🥚', label: 'Learning patterns...', minSwipes: 25 },
+      { emoji: '🐣', label: 'Hatching!', minSwipes: 45 },
+      { emoji: '🐤', label: 'Almost there...', minSwipes: 70 },
       { emoji: '🐥', label: 'Ready to name!', minSwipes: 90 },
     ];
     this.currentStageIndex = 0;
