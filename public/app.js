@@ -232,6 +232,7 @@ class MellamoApp {
       // Update favorites count immediately
       if (result.addedToFavorites) {
         this.favoritesCountEl.textContent = result.addedToFavorites;
+        this.drawAttentionToFavorites();
       }
     } catch (err) {
       console.error('Failed to seed preferences:', err);
@@ -247,6 +248,43 @@ class MellamoApp {
     this.cardContainer.classList.remove('hidden');
     this.controls.classList.remove('hidden');
     this.emptyState.classList.add('hidden');
+  }
+
+  async drawAttentionToFavorites() {
+    // Option 5: Slide-out preview
+    const favBtn = document.getElementById('favorites-btn');
+    
+    // Fetch the favorites to show names
+    try {
+      const response = await fetch(`/api/session/${this.sessionId}/favorites`);
+      const favorites = await response.json();
+      
+      if (favorites.length === 0) return;
+      
+      // Create preview element
+      const preview = document.createElement('div');
+      preview.className = 'favorites-preview';
+      preview.innerHTML = `
+        <h4>❤️ Added to favorites!</h4>
+        <ul>
+          ${favorites.slice(0, 5).map(f => `<li>${f.name}</li>`).join('')}
+          ${favorites.length > 5 ? `<li style="color: #999;">+${favorites.length - 5} more...</li>` : ''}
+        </ul>
+      `;
+      
+      // Position relative to favorites button
+      favBtn.style.position = 'relative';
+      favBtn.appendChild(preview);
+      
+      // Auto-close after 2.5 seconds
+      setTimeout(() => {
+        preview.classList.add('favorites-preview-fade');
+        setTimeout(() => preview.remove(), 300);
+      }, 2500);
+      
+    } catch (err) {
+      console.error('Failed to show preview:', err);
+    }
   }
 
   showComplete() {

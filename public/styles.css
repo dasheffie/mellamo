@@ -73,6 +73,57 @@ body {
   background: rgba(0, 0, 0, 0.05);
 }
 
+/* Option 5: Slide-out preview */
+.favorites-preview {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  padding: 12px 16px;
+  min-width: 200px;
+  max-width: 280px;
+  z-index: 200;
+  animation: slide-down 0.3s ease-out;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.favorites-preview h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: var(--primary);
+}
+
+.favorites-preview ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.favorites-preview li {
+  padding: 4px 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #eee;
+}
+
+.favorites-preview li:last-child {
+  border-bottom: none;
+}
+
+.favorites-preview-fade {
+  animation: fade-out 0.3s ease-in forwards;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
 #favorites-count {
   background: var(--primary);
   color: white;
