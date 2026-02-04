@@ -330,7 +330,7 @@ class MellamoApp {
 
   async loadNextName() {
     try {
-      const response = await fetch(`/api/session/${this.sessionId}/next?exploration=${this.explorationRate}`);
+      const response = await fetch(`/api/session/${this.sessionId}/next?exploration=${this.explorationRate}&_t=${Date.now()}`);
       const data = await response.json();
       
       if (data.complete) {

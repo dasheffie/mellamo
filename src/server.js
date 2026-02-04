@@ -719,9 +719,17 @@ app.get('/api/session/:id/predictions', (req, res) => {
     if (!session) return res.status(404).json({ error: 'Session not found' });
     
     const model = getModelForSession(session);
+    const genderFilter = session.gender_filter || 'all';
     
-    // Get ALL names (including already swiped)
-    db.all('SELECT * FROM names', (err, allNames) => {
+    // Get names filtered by gender preference
+    let query = 'SELECT * FROM names';
+    let params = [];
+    if (genderFilter !== 'all') {
+      query += ' WHERE gender = ?';
+      params.push(genderFilter);
+    }
+    
+    db.all(query, params, (err, allNames) => {
       if (err) return res.status(500).json({ error: 'Database error' });
       
       // Get liked names for similarity boost
@@ -753,12 +761,8 @@ app.get('/api/session/:id/predictions', (req, res) => {
             };
           });
           
-          // Sort: favorites float to top, then by ML score
-          scoredNames.sort((a, b) => {
-            if (a.was_favorited && !b.was_favorited) return -1;
-            if (!a.was_favorited && b.was_favorited) return 1;
-            return b.ml_score - a.ml_score;
-          });
+          // Sort by ML score only
+          scoredNames.sort((a, b) => b.ml_score - a.ml_score);
           
           res.json({
             predictions: scoredNames.slice(0, limit),
