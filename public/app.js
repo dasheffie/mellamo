@@ -388,26 +388,12 @@ class MellamoApp {
       this.finalFavoritesEl.textContent = stats.favoritesCount;
       this.rejectsCountEl.textContent = stats.rejectsCount || 0;
       
-      // Update top prediction (with reveal mechanic)
-      const swipesRemaining = Math.max(0, this.REVEAL_THRESHOLD - stats.swipeCount);
-      
-      if (swipesRemaining > 0) {
-        // Still locked
-        this.topPredictionStat.classList.add('hidden');
-        this.topPredictionLocked.classList.remove('hidden');
-        this.swipesUntilReveal.textContent = swipesRemaining;
-      } else if (stats.topPrediction) {
-        // Unlocked!
-        this.topPredictionLocked.classList.add('hidden');
+      // Update top prediction (always visible, no reveal mechanic)
+      this.topPredictionLocked.classList.add('hidden');
+      if (stats.topPrediction) {
         this.topPredictionStat.classList.remove('hidden');
         this.topPredictionName.textContent = stats.topPrediction.name;
         this.topPredictionPercent.textContent = stats.topPrediction.match_percent;
-        
-        // Celebrate first reveal
-        if (!this.hasRevealed && stats.swipeCount >= this.REVEAL_THRESHOLD) {
-          this.hasRevealed = true;
-          this.celebrateReveal(stats.topPrediction);
-        }
       }
       
       // Update baby growth
@@ -415,38 +401,6 @@ class MellamoApp {
     } catch (err) {
       console.error('Failed to update stats:', err);
     }
-  }
-
-  celebrateReveal(topPrediction) {
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'reveal-overlay';
-    document.body.appendChild(overlay);
-    
-    // Create celebration modal
-    const celebration = document.createElement('div');
-    celebration.className = 'reveal-celebration';
-    celebration.innerHTML = `
-      <h2>🎉 Your Top Match Revealed!</h2>
-      <div class="revealed-name">${topPrediction.name}</div>
-      <div class="revealed-percent">${topPrediction.match_percent}% match</div>
-      <p>Based on your first ${this.REVEAL_THRESHOLD} swipes, the model predicts you'll love this name!</p>
-      <button class="btn btn-primary" onclick="app.closeRevealCelebration()">Keep Swiping!</button>
-    `;
-    document.body.appendChild(celebration);
-    
-    // Animate the stats bar
-    this.topPredictionStat.classList.add('just-revealed');
-    setTimeout(() => {
-      this.topPredictionStat.classList.remove('just-revealed');
-    }, 800);
-  }
-
-  closeRevealCelebration() {
-    const overlay = document.querySelector('.reveal-overlay');
-    const celebration = document.querySelector('.reveal-celebration');
-    if (overlay) overlay.remove();
-    if (celebration) celebration.remove();
   }
 
   async maybeShowNarration(swipeCount) {
