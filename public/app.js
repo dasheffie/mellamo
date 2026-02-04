@@ -79,15 +79,13 @@ class MellamoApp {
     this.growthFill = document.getElementById('growth-fill');
     this.growthLabel = document.getElementById('growth-label');
     
-    // Chick growth stages (egg → hatching → chick)
+    // Chick growth stages (nest → egg → hatching → chick)
     this.babyStages = [
-      { emoji: '🥚', label: 'Just started...', minSwipes: 0 },
-      { emoji: '🪺', label: 'Warming up...', minSwipes: 5 },
-      { emoji: '🍳', label: 'Cracking open...', minSwipes: 15 },
+      { emoji: '🪹', label: 'Just started...', minSwipes: 0 },
+      { emoji: '🪺', label: 'Warming up...', minSwipes: 10 },
       { emoji: '🐣', label: 'Hatching!', minSwipes: 30 },
-      { emoji: '🐤', label: 'Almost there...', minSwipes: 50 },
-      { emoji: '🐥', label: 'Ready to name!', minSwipes: 75 },
-      { emoji: '🐔', label: 'Model trained!', minSwipes: 100 },
+      { emoji: '🐤', label: 'Almost there...', minSwipes: 60 },
+      { emoji: '🐥', label: 'Ready to name!', minSwipes: 90 },
     ];
     this.currentStageIndex = 0;
     
