@@ -228,11 +228,17 @@ class MellamoApp {
       
       const result = await response.json();
       console.log('Seeded preferences:', result);
+      
+      // Update favorites count immediately
+      if (result.addedToFavorites) {
+        this.favoritesCountEl.textContent = result.addedToFavorites;
+      }
     } catch (err) {
       console.error('Failed to seed preferences:', err);
     }
     
     this.showSwiping();
+    await this.updateStats();
     await this.loadNextName();
   }
 
