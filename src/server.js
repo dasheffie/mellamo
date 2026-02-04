@@ -663,11 +663,26 @@ app.post('/api/session/:id/seed-preferences', (req, res) => {
           console.error('Failed to save seeded model:', e);
         }
         
+        // Also add matched names as favorites (right swipes)
+        const swipeInserts = matchedNames.map(name => {
+          return new Promise((resolve) => {
+            const swipeId = require('uuid').v4();
+            db.run(
+              'INSERT OR IGNORE INTO swipes (id, session_id, name_id, direction) VALUES (?, ?, ?, ?)',
+              [swipeId, id, name.id, 'right'],
+              (err) => resolve(!err)
+            );
+          });
+        });
+        
+        await Promise.all(swipeInserts);
+        
         res.json({
           success: true,
           matchedCount: matchedNames.length,
           matchedNames: matchedNames.map(n => n.name),
-          modelUpdateCount: model.updateCount
+          modelUpdateCount: model.updateCount,
+          addedToFavorites: matchedNames.length
         });
       }
     );
