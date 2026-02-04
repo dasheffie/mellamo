@@ -82,8 +82,8 @@ class MellamoApp {
     // Chick growth stages (egg → hatching → chick)
     this.babyStages = [
       { emoji: '🥚', label: 'Just started...', minSwipes: 0 },
-      { emoji: '🥚', label: 'Warming up...', minSwipes: 5 },
-      { emoji: '🥚', label: 'Learning patterns...', minSwipes: 15 },
+      { emoji: '🪺', label: 'Warming up...', minSwipes: 5 },
+      { emoji: '🍳', label: 'Cracking open...', minSwipes: 15 },
       { emoji: '🐣', label: 'Hatching!', minSwipes: 30 },
       { emoji: '🐤', label: 'Almost there...', minSwipes: 50 },
       { emoji: '🐥', label: 'Ready to name!', minSwipes: 75 },
